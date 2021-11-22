@@ -243,7 +243,7 @@ struct FVector4
 		return New;
 	}
 
-	FVector4() {}
+	FVector4() = default;
 
 	FVector3 GetVector3() const
 	{

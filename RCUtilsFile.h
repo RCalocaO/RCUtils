@@ -145,6 +145,41 @@ namespace RCUtils
 		return Path;
 	}
 
+
+	inline std::vector<std::string> GetFilenamesInDir(const char* Path, bool bFullFilename)
+	{
+		std::vector<std::string> FileList;
+		if (Path && *Path)
+		{
+			std::string Filename = Path;
+			Filename += "\\*.*";
+			::WIN32_FIND_DATAA FindData;
+			::HANDLE Found = INVALID_HANDLE_VALUE;
+			Found = ::FindFirstFileA(Filename.c_str(), &FindData);
+			if (Found != INVALID_HANDLE_VALUE)
+			{
+				do
+				{
+					if (!(FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+					{
+						std::string ItemName;
+						if (bFullFilename)
+						{
+							ItemName = Path;
+							ItemName += "\\";
+						}
+						ItemName += FindData.cFileName;
+						FileList.push_back(ItemName);
+					}
+				}
+				while (::FindNextFileA(Found, &FindData));
+				::FindClose(Found);
+			}
+		}
+
+		return FileList;
+	}
+
 	// Returns true is Src is newer than Dst or if Dst doesn't exist
 	inline bool IsNewerThan(const std::string& Src, const std::string& Dst)
 	{
