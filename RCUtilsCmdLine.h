@@ -19,9 +19,76 @@ namespace RCUtils
 
 			for (int32 i = 1; i < __argc; ++i)
 			{
-				FullCmdLine += __argv[i];
-				FullCmdLine += " ";
-				Args.push_back(__argv[i]);
+				if (__argv[i][0] == '@')
+				{
+					ParseIni(__argv[i] + 1);
+				}
+				else
+				{
+					AddArgument(__argv[i]);
+				}
+			}
+		}
+
+		void AddArgument(const char* Arg)
+		{
+			FullCmdLine += Arg;
+			FullCmdLine += " ";
+			Args.push_back(Arg);
+		}
+
+		void AddLine(const char* Line)
+		{
+			while (*Line && !(*Line == '\r' || *Line == '\n'))
+			{
+				while (*Line == ' ')
+				{
+					++Line;
+				}
+				char NewArgStr[256] = "";
+				char* NewArg = NewArgStr;
+				bool bInQuotes = false;
+				while (*Line && !(*Line == '\r' || *Line == '\n'))
+				{
+					if (!bInQuotes && *Line == ';')
+					{
+						break;
+					}
+					*NewArg++ = *Line;
+					if (*Line == '"')
+					{
+						bInQuotes = !bInQuotes;
+					}
+					++Line;
+					if (*Line == ' ' && !bInQuotes)
+					{
+						break;
+					}
+				}
+
+				if (NewArg != NewArgStr)
+				{
+					AddArgument(NewArgStr);
+				}
+
+				if (*Line == ';')
+				{
+					break;
+				}
+			}
+		}
+
+		void ParseIni(const char* Filename)
+		{
+			FILE* f = fopen(Filename, "r");
+			if (f)
+			{
+				char s[256];
+				while (fgets(s, 255, f))
+				{
+					AddLine(s);
+				}
+				fclose(f);
 			}
 		}
 
