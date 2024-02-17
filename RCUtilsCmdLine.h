@@ -106,7 +106,7 @@ namespace RCUtils
 			return false;
 		}
 
-		uint32 TryGetIntPrefix(const char* Prefix, uint32 ValueIfMissing)
+		uint32 TryGetIntPrefix(const char* Prefix, uint32 ValueIfMissing, bool* pFound = nullptr)
 		{
 			check(Prefix);
 			uint32 PrefixLength = (uint32)strlen(Prefix);
@@ -115,6 +115,10 @@ namespace RCUtils
 				if (!_strnicmp(Arg.c_str(), Prefix, PrefixLength))
 				{
 					const char* IntString = Arg.c_str() + PrefixLength;
+					if (pFound)
+					{
+						*pFound = true;
+					}
 					return atoi(IntString);
 				}
 			}
@@ -122,7 +126,7 @@ namespace RCUtils
 			return ValueIfMissing;
 		}
 
-		float TryGetFloatPrefix(const char* Prefix, float ValueIfMissing)
+		float TryGetFloatPrefix(const char* Prefix, float ValueIfMissing, bool* pFound = nullptr)
 		{
 			check(Prefix);
 			uint32 PrefixLength = (uint32)strlen(Prefix);
@@ -131,6 +135,10 @@ namespace RCUtils
 				if (!_strnicmp(Arg.c_str(), Prefix, PrefixLength))
 				{
 					const char* FloatString = Arg.c_str() + PrefixLength;
+					if (pFound)
+					{
+						*pFound = true;
+					}
 					return (float)atof(FloatString);
 				}
 			}
@@ -138,7 +146,7 @@ namespace RCUtils
 			return ValueIfMissing;
 		}
 
-		bool TryGetStringFromPrefix(const char* Prefix, const char*& OutValue)
+		bool TryGetStringFromPrefix(const char* Prefix, const char*& OutValue, bool* pFound = nullptr)
 		{
 			check(Prefix);
 			uint32 PrefixLength = (uint32)strlen(Prefix);
@@ -147,6 +155,10 @@ namespace RCUtils
 				if (!_strnicmp(Arg.c_str(), Prefix, PrefixLength))
 				{
 					OutValue = Arg.c_str() + PrefixLength;
+					if (pFound)
+					{
+						*pFound = true;
+					}
 					return true;
 				}
 			}
